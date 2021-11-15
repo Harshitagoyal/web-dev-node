@@ -21,6 +21,7 @@ app.get('/hello', (req, res) => {
 
 require('./services/movies-service')(app);
 require('./services/tweeter-service')(app);
+require('./services/profile-service')(app);
 
 let port = process.env.PORT || 4000;
 app.listen(port, "0.0.0.0", () => {
