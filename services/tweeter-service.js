@@ -1,16 +1,13 @@
-let tweets = require('../data/tweets.json');
+const dao = require('../db/tweets/tweet-dao');
 
 module.exports = (app) => {
 
     const findAllTweets = (req, res) => {
-        res.json(tweets);
+        dao.findAllTweets().then(tweets => res.json(tweets));
     }
-
-    app.get('/api/tweets', findAllTweets);
 
     const createTweet = (req, res) => {
         const newTweet = {
-            _id: (new Date()).getTime() + '',
             "topic": "Web Development",
             "userName": "ReactJS",
             "verified": false,
@@ -18,33 +15,26 @@ module.exports = (app) => {
             "time": "2h",
             "avatarIcon": "/images/elon_musk_avatar.jpeg",
             "block_image": "/images/space_suit.jpeg",
+            "block_title": "Countdown: Inspiration4 Mission to Space | Netflix Official Site",
+            "block_description": "Test description",
+            "block_link": "netflix.com",
             "comments": 123,
             "retweets": 234,
             "likes": 345,
             ...req.body,
         }
-        tweets = [
-            newTweet,
-            ...tweets
-        ];
-        res.json(newTweet);
+        console.log("Creating new tweet");
+        console.log(newTweet);
+        dao.createTweet(newTweet).then(newTweet => res.json(newTweet));
     }
 
-    app.post('/api/tweets', createTweet);
-
-    const deleteTweet = (req, res) => {
-        const id = req.params['id'];
-        tweets = tweets.filter(tweet => tweet._id !== id);
-        res.sendStatus(200);
-    }
-    app.delete('/api/tweets/:id', deleteTweet);
+    const deleteTweet = (req, res) =>
+        dao.deleteTweet(req.params.id)
+            .then((status) => res.send(status));
 
     const likeTweet = (req, res) => {
-        const id = parseInt(req.params['id']);
-        let updatedTweet = null;
-        tweets = tweets.map(tweet => {
-            if (tweet._id === id) {
-                console.log("Found id: " + id);
+        dao.findTweet(req.params.id)
+            .then(tweet => {
                 if (tweet.liked === true) {
                     tweet.liked = false;
                     tweet.likes--;
@@ -52,13 +42,15 @@ module.exports = (app) => {
                     tweet.liked = true;
                     tweet.likes++;
                 }
-                updatedTweet = tweet;
-                return tweet;
-            } else {
-                return tweet;
-            }
-        });
-        res.json(updatedTweet);
+                dao.updateTweet(req.params.id, tweet)
+                    .then(status => {
+                        res.json(tweet)
+                    });
+            })
     }
+
+    app.get('/api/tweets', findAllTweets);
+    app.post('/api/tweets', createTweet);
+    app.delete('/api/tweets/:id', deleteTweet);
     app.put('/api/tweets/:id/like', likeTweet);
 };

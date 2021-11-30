@@ -1,0 +1,75 @@
+show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+use webdev
+switched to db webdev
+
+db.movies.insert({title: 'Aliens', rating: 4.5})
+WriteResult({ "nInserted" : 1 })
+
+show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+webdev  0.000GB
+
+db.movies.insert({title: 'Terminator', rating: 4.8})
+WriteResult({ "nInserted" : 1 })
+
+db.movies.insert({title: 'Avatar', rating: 4.7})
+WriteResult({ "nInserted" : 1 })
+
+db.movies.insert({title: 'Dune', rating: 4.9})
+WriteResult({ "nInserted" : 1 })
+
+ db.movies.find();
+{ "_id" : ObjectId("61a032da2c9aff40ec208dfa"), "title" : "Aliens", "rating" : 4.5 }
+{ "_id" : ObjectId("61a0337f2c9aff40ec208dfb"), "title" : "Terminator", "rating" : 4.8 }
+{ "_id" : ObjectId("61a033a52c9aff40ec208dfc"), "title" : "Avatar", "rating" : 4.7 }
+{ "_id" : ObjectId("61a033c12c9aff40ec208dfd"), "title" : "Dune", "rating" : 4.9 }
+
+db.movies.find({_id: ObjectId("61a032da2c9aff40ec208dfa")});
+{ "_id" : ObjectId("61a032da2c9aff40ec208dfa"), "title" : "Aliens", "rating" : 4.5 }
+
+db.movies.find({title:'Aliens'});
+{ "_id" : ObjectId("61a032da2c9aff40ec208dfa"), "title" : "Aliens", "rating" : 4.5 }
+
+db.movies.find().pretty()
+{
+	"_id" : ObjectId("61a032da2c9aff40ec208dfa"),
+	"title" : "Aliens",
+	"rating" : 4.5
+}
+{
+	"_id" : ObjectId("61a0337f2c9aff40ec208dfb"),
+	"title" : "Terminator",
+	"rating" : 4.8
+}
+{
+	"_id" : ObjectId("61a033a52c9aff40ec208dfc"),
+	"title" : "Avatar",
+	"rating" : 4.7
+}
+{
+	"_id" : ObjectId("61a033c12c9aff40ec208dfd"),
+	"title" : "Dune",
+	"rating" : 4.9
+}
+
+ db.movies.updateOne({title: 'Avatar'},{$set:  {rating: 4.9}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+db.movies.updateOne({_id: ObjectId("61a033a52c9aff40ec208dfc")}, {$set: {rating:4.5}});
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+
+db.movies.deleteOne({_id: ObjectId("61a033c12c9aff40ec208dfd")});
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+db.movies.find()
+{ "_id" : ObjectId("61a032da2c9aff40ec208dfa"), "title" : "Aliens", "rating" : 4.5 }
+{ "_id" : ObjectId("61a0337f2c9aff40ec208dfb"), "title" : "Terminator", "rating" : 4.8 }
+{ "_id" : ObjectId("61a033a52c9aff40ec208dfc"), "title" : "Avatar", "rating" : 4.5 }
+

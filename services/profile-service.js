@@ -1,27 +1,17 @@
-let profileData = {
-    "name": 'Jose Annunziato',
-    "handle": 'jannunzi',
-    "profilePicture": '/images/jose.jpeg',
-    "bannerPicture": '/images/polyglot.jpeg',
-    "bio": 'Faculty, Software Engineer, AI, Space, and renewable enthusiast. Retweets and likes are not endorsements.',	website: 'youtube.com/webdevtv',
-    "location": 'Boston, MA',
-    "dateOfBirth": 'Nov 21, 1968',
-    "dateJoined": 'April 2009',
-    "followingCount": 312,
-    "followersCount": 180,
-    "tweets": 5196,
-};
+const dao = require('../db/profile/profile-dao');
 
 module.exports = (app) => {
     const getCurrentProfile = (req, res) => {
-        res.json(profileData);
+        dao.findProfileById('jannunzi').then(profile => res.json(profile));
     }
 
     app.get('/api/profile', getCurrentProfile);
 
     const updateCurrentProfile = (req, res) => {
-        profileData = req.body;
-        res.sendStatus(200);
+        dao.updateProfile(req.params.id, req.body)
+            .then(status => {
+                res.sendStatus(200);
+            });
     }
-    app.put('/api/profile', updateCurrentProfile);
+    app.put('/api/profile/:id', updateCurrentProfile);
 };
